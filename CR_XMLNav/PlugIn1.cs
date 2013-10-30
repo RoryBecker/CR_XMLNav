@@ -13,6 +13,7 @@ namespace CR_XMLNav
     public partial class PlugIn1 : StandardPlugIn
     {
         private List<string> _Attributes;
+        private Settings settings;
         // DXCore-generated code...
         #region InitializePlugIn
         public override void InitializePlugIn()
@@ -61,8 +62,12 @@ namespace CR_XMLNav
             string AttributeName = ((XmlAttribute)Element).Name;
 
             List<List<string>> AttributeCollections = new List<List<string>>();
-            AttributeCollections.Add("id|ref".Split('|').ToList());
-            AttributeCollections.Add("id1|ref1".Split('|').ToList());
+            settings = Options1.LoadSettings(Options1.Storage);
+            string[] AttributeSets = settings.AttributeNames.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries );
+            foreach (string AttributeSet in AttributeSets)
+            {
+                AttributeCollections.Add(AttributeSet.Split('|').ToList());
+            }
             _Attributes = null;
             foreach (List<string> attributes in AttributeCollections)
             {
