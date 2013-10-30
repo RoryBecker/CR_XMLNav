@@ -12,6 +12,7 @@ namespace CR_XMLNav
 {
     public partial class PlugIn1 : StandardPlugIn
     {
+        private List<string> _Attributes;
         // DXCore-generated code...
         #region InitializePlugIn
         public override void InitializePlugIn()
@@ -56,7 +57,21 @@ namespace CR_XMLNav
             if (!(Element is XmlAttribute))
                 return;
             // Allow search to start if Attribute
-            ea.Available = new string[] { "id", "ref" }.Contains(((XmlAttribute)Element).Name);
+
+            string AttributeName = ((XmlAttribute)Element).Name;
+
+            List<List<string>> AttributeCollections = new List<List<string>>();
+            AttributeCollections.Add("id|ref".Split('|').ToList());
+            AttributeCollections.Add("id1|ref1".Split('|').ToList());
+            _Attributes = null;
+            foreach (List<string> attributes in AttributeCollections)
+            {
+                if (attributes.Contains(AttributeName))
+                {
+                    _Attributes = attributes;
+                }
+            }
+            ea.Available = _Attributes != null;
         }
         private void XMLRefSearch_SearchReferences(Object Sender, DevExpress.CodeRush.Core.SearchEventArgs ea)
         {
@@ -71,7 +86,7 @@ namespace CR_XMLNav
                 foreach (SourceFile sourceFile in project.AllFiles)
                 {
                     SourceFile activeFile = CodeRush.Source.ActiveSourceFile;
-                    ElementEnumerable Enumerator = new ElementEnumerable(sourceFile, new XMLAttributeFilter(StartValue), true);
+                    ElementEnumerable Enumerator = new ElementEnumerable(sourceFile, new XMLAttributeFilter(StartValue, _Attributes), true);
                     foreach (XmlAttribute CurrentAttribute in Enumerator)
                     {
                         ea.AddRange(new FileSourceRange(CurrentAttribute.FileNode, CurrentAttribute.ValueRange));
@@ -83,8 +98,10 @@ namespace CR_XMLNav
     public class XMLAttributeFilter : IElementFilter
     {
         private readonly string _startValue;
-        public XMLAttributeFilter(string StartValue)
+        private readonly List<string> _attributes;
+        public XMLAttributeFilter(string StartValue, List<string> Attributes)
         {
+            _attributes = Attributes;
             _startValue = StartValue;
         }
         public bool Apply(IElement element)
@@ -100,12 +117,12 @@ namespace CR_XMLNav
             XmlAttribute CurrentAttribute = (XmlAttribute)element;
 
             // Skip attribute if it doesn't have the correct name.
-            if (CurrentAttribute.Name != "id" && CurrentAttribute.Name != "ref")
+            if (!(_attributes.Contains(CurrentAttribute.Name)))
                 return false;
 
             // Skip the attribute if it doesn't have the same value as start point.
             if (CurrentAttribute.Value != _startValue)
-                return false; 
+                return false;
 
             return true;
         }
