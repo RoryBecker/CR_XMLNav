@@ -2,8 +2,8 @@
 <Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
   <Identifier Id="CR_XMLNav">
     <Name>XMLNav for CodeRush </Name>
-    <Author>MyCompany</Author>
-    <Version>1.0</Version>
+    <Author>Rory Becker</Author>
+    <Version>1.1</Version>
     <Description xml:space="preserve">XMLNav provides an extention to CodeRush's TabToNextReference feature. It adds the ability to tab between id and ref XML attributes with the same value.</Description>
     <Locale>1033</Locale>
     <SupportedProducts>
